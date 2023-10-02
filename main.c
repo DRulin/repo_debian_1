@@ -6,11 +6,13 @@ struct user_data {
 };
 void create_user_db(void);
 void add_user_to_db(void);
+void remove_user_from_db(void);
 struct user_data input_user_data(FILE *user_db);
 int last_user_id(FILE *user_db);
 int main(int argc, char *argv[]) {
     // create_user_db();
-    add_user_to_db();
+    // add_user_to_db();
+    remove_user_from_db();
     return 0;
 }
 void create_user_db(void) {
@@ -51,4 +53,32 @@ int last_user_id(FILE *user_db) {
         last_id = 0;
     }
     return last_id; 
+}
+void remove_user_from_db(void) {
+    FILE *user_db, *user_db_new;
+    char ch, surname_to_remove[20], current_surname[20], one_row[100];
+    int licznik = 0;
+    user_db = fopen("addit_files/user_db.txt", "r");
+    user_db_new = fopen("addit_files/user_db_new.txt", "w");
+    printf("Podaj nazwisko uzytkownika ktorego chcesz usunac: ");
+    scanf("%s", surname_to_remove);
+    while (fgets(one_row, 100, user_db) != NULL) {
+        if (licznik > 0) {
+            sscanf(one_row, "%*d%*s%s", current_surname);
+            if (!strcmp(surname_to_remove, current_surname)) {         
+                continue;
+            }
+        }
+        fputs(one_row, user_db_new);
+        if (licznik > 0) {
+            fseek(user_db_new, -strlen(one_row), SEEK_CUR);
+            fputc(licznik+'0', user_db_new);
+            fseek(user_db_new, strlen(one_row)-1, SEEK_CUR);
+        } 
+        licznik++;
+    }
+    fclose(user_db);
+    fclose(user_db_new);
+    remove("addit_files/user_db.txt");
+    rename("addit_files/user_db_new.txt", "addit_files/user_db.txt");
 }
