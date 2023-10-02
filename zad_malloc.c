@@ -26,6 +26,7 @@ int main() {
     printf("Udalo sie!\n");
     for(i = 0; i < liczba_slow; i++) {
         printf("%s %p %p\n", wsk[i], wsk[i], &wsk[i]);
+        free(wsk[i]);
     }
     return 0;
 }
